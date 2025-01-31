@@ -500,7 +500,7 @@ my %and_or = (
 	ja => "又は",    # or
 	nl => " en/of | en / of ",
 	nb => " og | eller | og/eller | og / eller ",
-	pl => " i | oraz | lub | albo ",
+	pl => " i | oraz | lub | albo | i/lub",
 	ru => " и | или | и/или | и / или ",
 	sv => " och | eller | och/eller | och / eller ",
 );
@@ -2882,6 +2882,7 @@ sub parse_ingredients_text_service ($product_ref, $updated_product_fields_ref, $
 							'pl' => [
 								'^czekolada( deserowa)?: masa kakaowa min(imum)?$',
 								'^masa kakaowa( w czekoladzie mlecznej)? min(imum)?$',
+								'^zawartość masy kakaowej min(imum)?%',
 								'^masa mleczna min(imum)?$',
 								'^zawartość tłuszczu$',
 								'^(?>\d+\s+g\s+)?(?>\w+\s?)*?100\s?g(?> \w*)?$'
@@ -4880,6 +4881,7 @@ sub normalize_vitamin ($lc, $a) {
 		($lc eq 'nl') and return "vitamine $a";
 		($lc eq 'is') and return "$a-vítamín";
 		($lc eq 'pl') and return "witamina $a";
+		($lc eq 'ro') and return "vitamina $a";
 		return "vitamin $a";
 	}
 	else {
@@ -4901,7 +4903,7 @@ sub normalize_vitamins_enumeration ($lc, $vitamins_list) {
 	my $split_vitamins_list;
 
 	if ($lc eq 'da' || $lc eq 'nb' || $lc eq 'sv') {$split_vitamins_list = "vitaminer"}
-	elsif ($lc eq 'de' || $lc eq 'it') {$split_vitamins_list = "vitamine"}
+	elsif ($lc eq 'de' || $lc eq 'it' | $lc eq 'ro') {$split_vitamins_list = "vitamine"}
 	elsif ($lc eq 'ca') {$split_vitamins_list = "vitamines"}
 	elsif ($lc eq 'es') {$split_vitamins_list = "vitaminas"}
 	elsif ($lc eq 'fr') {$split_vitamins_list = "vitamines"}
@@ -5442,7 +5444,7 @@ my %phrases_after_ingredients_list = (
 	],
 
 	pl => [
-		'przechowywać w chlodnym i ciemnym miejscu',    #keep in a dry and dark place
+		'przechowywać w ch(l|ł)odnym i ciemnym miejscu',    #keep in a dry and dark place
 		'n(a|o)jlepiej spożyć przed',    #Best before
 		'Przechowywanie',
 		'pakowan(o|y|e) w atmosferze ochronnej',    # Packaged in protective environment
@@ -6123,17 +6125,20 @@ my %ingredients_categories_and_types = (
 				"tłuszcze",
 				"tłuszcze roślinne",
 				"tłuszcz roślinny",
+				"tłuszcz roślinny całkowicie utwardzony"
 			],
 			types => [
 				"rzepakowy", "z oliwek", "palmowy", "słonecznikowy",
 				"kokosowy", "sojowy", "shea", "palmowy utwardzony",
-				"palmowy nieutwardzony",
+				"palmowy nieutwardzony", "całkowicie utwardzony palmowy",
+				"z ziaren palmowych"
 			],
 		},
 		# concentrates
 		{
 			categories => [
-				"koncentraty",
+				"koncentraty", "koncentrat", "koncentrat soku",
+				"koncentraty z", "koncentrat z", "koncentrat soku z",
 				"koncentraty roślinne",
 				"soki z zagęszczonych soków z",
 				"soki owocowe", "przeciery", "przeciery z", "soki owocowe z zagęszczonych soków owocowych",
@@ -6141,7 +6146,8 @@ my %ingredients_categories_and_types = (
 			types => [
 				"jabłek", "pomarańczy", "marchwi", "bananów", "brzoskwiń", "gujawy",
 				"papai", "ananasów", "mango", "marakui", "liczi", "kiwi",
-				"limonek", "jabłkowy", "marchwiowy", "bananowy", "pomarańczowy"
+				"limonek", "jabłkowy", "marchwiowy", "bananowy", "pomarańczowy",
+				"moreli", "passiflory", "limetek", "kaktusa"
 			],
 		},
 		# flours
